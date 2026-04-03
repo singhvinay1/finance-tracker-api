@@ -56,6 +56,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, swaggerUiOpt
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api', routes);
 
+// ── Root route (IMPORTANT for Vercel) ─────────────────────────────
+app.get('/', (_req, res) => {
+  res.redirect('/api-docs'); // or '/health'
+});
+
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ error: true, message: 'Route not found' });
