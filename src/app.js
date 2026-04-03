@@ -24,13 +24,24 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// ── Health check ──────────────────────────────────────────────────────────────
+// ── Root Redirect & Health check ──────────────────────────────────────────────
+app.get('/', (_req, res) => {
+  res.redirect('/api-docs');
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // ── Swagger UI ────────────────────────────────────────────────────────────────
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+const swaggerUiOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js'
+  ]
+};
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, swaggerUiOptions));
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api', routes);
